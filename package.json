@@ -1,0 +1,17 @@
+{
+  "name": "gb53_MODULE",
+  "version": "0.5.0",
+  "description": "gb53.net MODULE",
+  "main": "gb53_MODULE.js",
+  "scripts": {
+	"browserify": "browserify gb53_MODULE.js -o ../bundles/gb53_MODULE.js -dv",
+	"jsdoc": "jsdoc gb53_MODULE.js -d ../jsdocs", 
+    "test": "qunit -c gb53_MODULE.js -t tests.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://bitbucket.org/geneball/gb53_MODULE"
+  },
+  "author": "Gene Ball",
+  "license": "ISC"
+}

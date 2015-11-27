@@ -1,11 +1,7 @@
-/**
- * gb53.net logging module - 
- * @module gb53_log
- */
 
 'use strict';
 // vendor_bundle.js 
-var $ = require('jquery-browserify');
+var $ = require('jquery');
 var moment = require('moment');
 var sprintf = require('sprintf');
 var Log = this;

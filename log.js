@@ -4,21 +4,26 @@
  */
 
 'use strict';
-// vendor_bundle.js 
-var $ = require('jquery-browserify');
-var moment = require('moment');
-var sprintf = require('sprintf');
-var Log = this;
-var console = require('console');
 
-var Version = 'log.js 25-Sep-15';
-/** get Version string
- * @returns {string} version as 'filename.js date'
- */
-exports.getVersion = 
-	function getVersion(){ 
-		return Version; 
-	};
+(function gb53_MODULE(){
+	var $		= require('jquery-browserify', '$');
+	var moment 	= require('moment');
+	var sprintf	= require('sprintf');
+	var console = require('console');
+	//var expect 	= require('expect');		// for verify()
+	var Log 	= exports;  //require('gb53_log', 'Log'); // Log. e() w() d() i() v() V() W() WF() C() show()
+	//var Utils 	= require('gb53_utils', 'Utils'), PI = Utils.PI, DEG = Utils.DEG, asBool = Utils.asBool, asNum = Utils.asNum, asInt = Utils.asInt, selBool = Utils.selBool, selNum = Utils.selNum, selInt = Utils.selInt, angleWrap = Utils.angleWrap, clamp = Utils.clamp, pctClamp = Utils.pctClamp;
+	var Utils 	= require('gb53_utils', 'Utils', 'PI,DEG,asBool,asNum,asInt,selBool,selNum,selInt,angleWrap,clamp,pctClamp');
+	// import { PI,DEG,asBool,asNum,asInt,selBool,selNum,selInt,angleWrap,clamp,pctClamp } from 'gb53_utils';
+	
+	var Version = 'log.js 25-Sep-15';
+	/** get Version string
+	 * @returns {string} version as 'filename.js date'
+	 */
+	exports.getVersion = 
+		function getVersion(){ 
+			return Version; 
+		};
 
 //    var tags = {};
 //
@@ -117,17 +122,17 @@ exports.getVersion =
     var testInBrowser = new Function("try { return this===window; } catch(e){ return false; }");
     var inBrowser = testInBrowser();
     var LogLines = [], LogDisabled = false;
+    
 var init = 
     /** 
      * initialize Log 
      * @param {string} [jquery_selector] - specifies DOM element to append Log to (defaults to 'body')
      */
-	
 exports.init = 
 	function init(selector) {
     	if (logCnt!=null) return; // already called
-		logCnt = 0;				  // so don't repeat or self initialize
-	if (inBrowser){
+		logCnt = 0;				  // so we don't repeat self-initialize
+		if (inBrowser){
             if (selector == undefined) selector = 'body';
             $(selector).append('<div id="logMarkup" class="log_top log_left"><div id="logOverlay"></div>  <div id="logPopup" class="log_grp log_grp__C"></div></div>');
             var html = shiftHtml(tags._LA,'hide_grp log_LR') + shiftHtml(tags._RA,'log_LR') + shiftHtml(tags._UA,'hide_grp log_UD') + shiftHtml(tags._DA,'log_UD');
@@ -147,14 +152,14 @@ exports.init =
             $('#logPopup').html(html);
     
             initStyles();
-	}
+		}
         setButtons([ '_LA','_RA','_UA','_DA', '_C','_W','_L', '_wlab','_wval','_wcnt','_wlast', '_e','_w','_i','_d','_v','__W', '__C', '_num','_lev','_tag','_dt','_msg','_val','_descr' ]);
         VCF('dtFmt: used in log entries =HH:mm:ss', reformatDates);
         valChoices('dtFmt', ['H:mm:ss', 'mm:ss', 'D-MMM H:mm:ss', 'pop-up']);
         info('version: %s', Version);
 
         V('pgSize: num lines per log page =30');
-	if (!inBrowser) return;
+        if (!inBrowser) return;
 	
 //        CF('test1: run a log test', LogTest.test1);
         CF('chart: add recorder chart', addChart,this);
@@ -560,7 +565,8 @@ var ToggleView = exports.ToggleView = function ToggleView(){
         this.startTS = null; 
         this.currTS = 0;
     }
-    chart.prototype.scale =  function scale(cmd){
+    chart.prototype.scale =  
+    function scale(cmd){
         for (var t in this.traces){
             var tag = this.traces[t];
             var rec = tag.recorder;
@@ -572,28 +578,31 @@ var ToggleView = exports.ToggleView = function ToggleView(){
             }
         }
     }
-    chart.prototype.html =  function html(wd, hi){
-	if (wd) this.wide = wd;
-	if (hi) this.high = hi;
-        var html = '<div id="logChart">'; 
-        html += sprintf('<canvas id="chartCanv" width="%d", height="%d" style="width: %dpx; height: %dpx;">',
-        	this.wide, this.high, this.wide, this.high);
-        html += sprintf('</canvas><div id="logChartTags" style="width: %dpx;">', this.wide); 
-        html += sprintf('<span class="log_Cmd">+</span><span class="log_Cmd">-</span><span class="log_Cmd">auto</span></div></div>','');
-        return html;
+    chart.prototype.html =  
+    function html(wd, hi){
+		if (wd) this.wide = wd;
+		if (hi) this.high = hi;
+	        var html = '<div id="logChart">'; 
+	        html += sprintf('<canvas id="chartCanv" width="%d", height="%d" style="width: %dpx; height: %dpx;">',
+	        	this.wide, this.high, this.wide, this.high);
+	        html += sprintf('</canvas><div id="logChartTags" style="width: %dpx;">', this.wide); 
+	        html += sprintf('<span class="log_Cmd">+</span><span class="log_Cmd">-</span><span class="log_Cmd">auto</span></div></div>','');
+	        return html;
     }
-    chart.prototype.addTrace =  function addTrace(tag){
-	var h = this.trCnt % this.NHues;
-	var lv = Math.floor(this.trCnt/this.NHues);
-        tag.recorder.color = sprintf('hsl(%d, 100%%, %d%%)', this.hues[h], this.lightvals[lv]);
-        if (this.trCnt==0)  
-            $('#logChartTags').on('click','span', logToggleTrace);
-        this.traces.push(tag);
-        this.trCnt++;
-        $('#logChartTags').append(sprintf('<span id="logTr%s" %s style="background: %s;">%s</span>', 
-        	tag.nm, (this.trCnt<4? 'class="log_on"':''), tag.recorder.color, tag.nm));
+    chart.prototype.addTrace =  
+    function addTrace(tag){
+		var h = this.trCnt % this.NHues;
+		var lv = Math.floor(this.trCnt/this.NHues);
+	        tag.recorder.color = sprintf('hsl(%d, 100%%, %d%%)', this.hues[h], this.lightvals[lv]);
+	        if (this.trCnt==0)  
+	            $('#logChartTags').on('click','span', logToggleTrace);
+	        this.traces.push(tag);
+	        this.trCnt++;
+	        $('#logChartTags').append(sprintf('<span id="logTr%s" %s style="background: %s;">%s</span>', 
+	        	tag.nm, (this.trCnt<4? 'class="log_on"':''), tag.recorder.color, tag.nm));
     };
-    chart.prototype.render = function render(ticms){  // shift by a step & fill in traces
+    chart.prototype.render = 
+    function render(ticms){  // shift by a step & fill in traces
         if (this.canv==null){
             this.canv = document.getElementById('chartCanv');
             this.ctx = this.canv.getContext('2d');
@@ -652,22 +661,27 @@ var ToggleView = exports.ToggleView = function ToggleView(){
     // end_chart -------------------------------------------
 
 
+    var show = 
     /* return current value of log variable 
      * @param {string} tagnm - name of log variable defined with Log.V()
      */
-var show = exports.show = function show(tagnm){
-	var tag = asTag(tagnm);
-    if (isBrowser())
-    	$('#logTog'+tag.nm).toggleClass('log_on', true);
+    exports.show = 
+    function show(tagnm){
+		var tag = asTag(tagnm);
+	    if (isBrowser())
+	    	$('#logTog'+tag.nm).toggleClass('log_on', true);
     }
-    
+
+    var val = 
     /* return current value of log variable 
      * @param {string} tagnm - name of log variable defined with Log.V()
      */
-var val = exports.val = function val(tagnm) {  // get value of switch set by Log, e.g. 'doExtra: do some extra stuff if true =false'
+	exports.val = 
+	function val(tagnm) {  // get value of switch set by Log, e.g. 'doExtra: do some extra stuff if true =false'
         var tag = asTag(tagnm);
         return tag.val;
     }
+    
     function asRec(tagnm){
         var tag = asTag(tagnm);
         if (tag.recorder==undefined){
@@ -678,50 +692,50 @@ var val = exports.val = function val(tagnm) {  // get value of switch set by Log
         return tag;
     }
     
-var recordVal =  
-/* record value of a chartable variable
- * @param {string} tagnm - name of chartable variable defined with Log.V()
- * @param {integer} tm - msec timestamp when value was recorded
- * @param {float} val - value of 'tagnm' at 'tm'
- */
-exports.recordVal = 
+	var recordVal =  
+	/* record value of a chartable variable
+	 * @param {string} tagnm - name of chartable variable defined with Log.V()
+	 * @param {integer} tm - msec timestamp when value was recorded
+	 * @param {float} val - value of 'tagnm' at 'tm'
+	 */
+	exports.recordVal = 
 	function recordVal(tagnm, tm, val){
         var tag = asRec(tagnm);
         tag.recorder.updt(tm, val);
         tag.val = val;
     }
+	
     function setScale(tagnm, minv, maxv){
         asRec(tagnm).recorder.setScale(minv, maxv);
     }
     
-var last = 
-/* return moment() when log variable was last updated
- * @param {string} tagnm - name of log variable defined with Log.V()
- */
-exports.last = 
-	function last(tagnm) {  // get time of last update
+	var last = 
+	/* return moment() when log variable was last updated
+	 * @param {string} tagnm - name of log variable defined with Log.V()
+	 */
+	exports.last = function last(tagnm) {  // get time of last update
         var tg = asTag(tagnm);
         return tg.last;
     }
     
-var cnt =   
-/* return number of times log variable has been updated
- * @param {string} tagnm - name of log variable defined with Log.V()
- */
-exports.cnt = 
+	var cnt =   
+	/* return number of times log variable has been updated
+	 * @param {string} tagnm - name of log variable defined with Log.V()
+	 */
+	exports.cnt = 
 	function cnt(tagnm) {  // get time of last update
         if (tagnm==undefined) return logCnt;
         var tg = asTag(tagnm);
         return tg.cnt;
     }
 
-var isSet =
-/** 
- * return boolean value of a log Variable 
- *   e.g. if (isSet('useXSize')){ ...
- * @param {string} tagnm - name of variable defined with Log.V()
- */
-exports.isSet = 
+	var isSet =
+	/** 
+	 * return boolean value of a log Variable 
+	 *   e.g. if (isSet('useXSize')){ ...
+	 * @param {string} tagnm - name of variable defined with Log.V()
+	 */
+	exports.isSet = 
 	function isSet(tagnm) { 
         return asBool(tagnm); 
     }
@@ -812,14 +826,13 @@ exports.isSet =
 	    return sprintf("%s[%s]", typ, val);
     };
     
-var C = 
-exports.C =  
-/** 
- * debug log the parameters to a call 
- * @param {string} nmstr - comma separated 'fnname,arg0,arg1,...'
- * @param {array} args - 'slice'd copy of callers 'arguments', i.e. Array.prototype.slice.call(arguments)
- */
-exports.Call = 
+	var C = exports.C =  
+	/** 
+	 * debug log the parameters to a call 
+	 * @param {string} nmstr - comma separated 'fnname,arg0,arg1,...'
+	 * @param {array} args - 'slice'd copy of callers 'arguments', i.e. Array.prototype.slice.call(arguments)
+	 */
+	exports.Call = 
     function Call(nmstr, args) {
     	var nms = nmstr.split(',');
     	var s = nms[0] + ": (";
@@ -831,67 +844,67 @@ exports.Call =
     	}
     	wr('d', s.substr(0,s.length-1)+' )');
     }
-var V = 
-exports.V =  
-/** 
- * define a log Variable -- used to control program options
- *   e.g. Log.Var('xsize: value used to configure program = 22');
- * @param {string} fmt - sprintf format string
- * @param {obj} ... - optional arguments matching fmt references
- */
-exports.Var = 
+
+	var V = exports.V =  
+	/** 
+	 * define a log Variable -- used to control program options
+	 *   e.g. Log.Var('xsize: value used to configure program = 22');
+	 * @param {string} fmt - sprintf format string
+	 * @param {obj} ... - optional arguments matching fmt references
+	 */
+	exports.Var = 
     function Var(fmt) {
         wr('V', sprintf.apply(null, arguments));
     }
 
-var VCF = exports.VCF = 
-/**
- *  register an onChange function for a log Variable
- *   e.g. Log.VarChangedFn('xsize', onXSizeChanged);
- * @param {string} tagnm -- name of Watch tag
- * @param {function} fn -- function to run to get value to show as watch
- * @param {object} mthis -- optional this for function
- */
-exports.VarChangedFn = 
+	var VCF = exports.VCF = 
+	/**
+	 *  register an onChange function for a log Variable
+	 *   e.g. Log.VarChangedFn('xsize', onXSizeChanged);
+	 * @param {string} tagnm -- name of Watch tag
+	 * @param {function} fn -- function to run to get value to show as watch
+	 * @param {object} mthis -- optional this for function
+	 */
+	exports.VarChangedFn = 
 	function VarFn(s, updatefn, mthis){    // register change function, e.g. dtFmt
         var tag = wr('V', s);
         onChange(tag.nm, updatefn, mthis);
     }
     
-var T = exports.T = 
-/** 
- * log a trace message 
- * @param {string} fmt - sprintf format string
- * @param {obj} ... - optional arguments matching fmt references
- */
-exports.Trace =
+	var T = exports.T = 
+	/** 
+	 * log a trace message 
+	 * @param {string} fmt - sprintf format string
+	 * @param {obj} ... - optional arguments matching fmt references
+	 */
+	exports.Trace =
     function Trace(fmt){
     	if (LogDisabled) return;
     	wr('T', sprintf.apply(null, arguments));
 }
     
 
-var W = exports.W = 
-/** 
- * define a Watch field -- when shown, current value is updated periodically
- * @param {string} fmt - sprintf format string
- * @param {obj} ... - optional arguments matching fmt references
- */
-exports.Watch = 
+	var W = exports.W = 
+	/** 
+	 * define a Watch field -- when shown, current value is updated periodically
+	 * @param {string} fmt - sprintf format string
+	 * @param {obj} ... - optional arguments matching fmt references
+	 */
+	exports.Watch = 
     function Watch(fmt) {
 	if (LogDisabled) return;
         wr('W', sprintf.apply(null, arguments));
 }
     
-var WF = exports.WF = 
-/**
- *  register an update function for a Watch value
- *    e.g. Log.WF('clock: current time', function(){ return moment().format(); });
- * @param {string} tagnm -- name of Watch tag
- * @param {function} fn -- function to run to get value to show as watch
- * @param {object} mthis -- optional this for function
- */
-exports.WatchFn = 
+	var WF = exports.WF = 
+	/**
+	 *  register an update function for a Watch value
+	 *    e.g. Log.WF('clock: current time', function(){ return moment().format(); });
+	 * @param {string} tagnm -- name of Watch tag
+	 * @param {function} fn -- function to run to get value to show as watch
+	 * @param {object} mthis -- optional this for function
+	 */
+	exports.WatchFn = 
     function WatchFn(s, updatefn, mthis){    // register update function, e.g. WF('clock: current time', function(){
 	if (LogDisabled) return;
         var tag = wr('W', s);
@@ -900,16 +913,14 @@ exports.WatchFn =
         updateGroups();
     }
 
-var CF = 
-exports.CF = 
-exports.CmdFn = 
-/**
- *  register a command function, e.g. CF('cmd: does xxx', function(){... 
- * @param {string} tagnm -- name of Var tag
- * @param {function} fn -- function to run when tag-button is clicked
- * @param {object} mthis -- optional this for function
- */
-exports.CommandFn = 
+	var CF = exports.CF = exports.CmdFn = 
+	/**
+	 *  register a command function, e.g. CF('cmd: does xxx', function(){... 
+	 * @param {string} tagnm -- name of Var tag
+	 * @param {function} fn -- function to run when tag-button is clicked
+	 * @param {object} mthis -- optional this for function
+	 */
+	exports.CommandFn = 
     function CmdFn(tagnm, fn, mthis){    
 	if (LogDisabled) return;
         var tag = wr('C', tagnm);
@@ -918,78 +929,73 @@ exports.CommandFn =
         updateGroups();
     }
 
-var valChoices = 
-/** 
- * specify legal value choices for a Var  
- * @param {string} tagnm -- name of Var tag
- * @param {string[]} choices -- legal values for 'tag' var
- */
-exports.valChoices = 
+	var valChoices = 
+	/** 
+	 * specify legal value choices for a Var  
+	 * @param {string} tagnm -- name of Var tag
+	 * @param {string[]} choices -- legal values for 'tag' var
+	 */
+	exports.valChoices = 
     function valChoices(tagnm, choices){
         var tag = asTag(tagnm);
         tag.choices = choices;
     }
 
-var e = exports.e = 
-/** 
- * log an error message 
- * @param {string} fmt - sprintf format string
- * @param {obj} ... - optional arguments matching fmt references
- */
-exports.error = 
+	var e = exports.e = 
+	/** 
+	 * log an error message 
+	 * @param {string} fmt - sprintf format string
+	 * @param {obj} ... - optional arguments matching fmt references
+	 */
+	exports.error = 
     function error(fmt) {
 	if (LogDisabled) return;
         wr('e', sprintf.apply(null, arguments));
     }
     
-var w = 
-exports.w = 
-exports.warn = 
-/** 
- * log a warning message 
- * @param {string} fmt - sprintf format string
- * @param {obj} ... - optional arguments matching fmt references
- */
-exports.warning = 
+	var w = exports.w = exports.warn = 
+	/** 
+	 * log a warning message 
+	 * @param {string} fmt - sprintf format string
+	 * @param {obj} ... - optional arguments matching fmt references
+	 */
+	exports.warning = 
     function warn(fmt) {
 	if (LogDisabled) return;
             wr('w', sprintf.apply(null, arguments));
     }
 
-var info = 
-exports.i = 
-/** 
- * log an information message 
- * @param {string} fmt - sprintf format string
- * @param {obj} ... - optional arguments matching fmt references
- */
-exports.info = 
+	var info = exports.i = 
+	/** 
+	 * log an information message 
+	 * @param {string} fmt - sprintf format string
+	 * @param {obj} ... - optional arguments matching fmt references
+	 */
+	exports.info = 
     function info(fmt) {	// use info internally to avoid conflicts with local var i
 	if (LogDisabled) return;
             wr('i', sprintf.apply(null, arguments));
     }
     
-var d = 
-exports.d =
-/** 
- * log a debug message 
- * @param {string} fmt - sprintf format string
- * @param {obj} ... - optional arguments matching fmt references
- */
-exports.debug = 
+	var d = exports.d =
+	/** 
+	 * log a debug message 
+	 * @param {string} fmt - sprintf format string
+	 * @param {obj} ... - optional arguments matching fmt references
+	 */
+	exports.debug = 
     function debug(fmt) {
 		if (LogDisabled) return;
         wr('d', sprintf.apply(null, arguments));
     }
     
-var i = 
-exports.v = 
-/** 
- * log a verbose message 
- * @param {string} fmt - sprintf format string
- * @param {obj} ... - optional arguments matching fmt references
- */
-exports.verbose = 
+	var v = exports.v = 
+	/** 
+	 * log a verbose message 
+	 * @param {string} fmt - sprintf format string
+	 * @param {obj} ... - optional arguments matching fmt references
+	 */
+	exports.verbose = 
     function verbose(fmt) {
 	if (LogDisabled) return;
             wr('v', sprintf.apply(null, arguments));
@@ -1032,6 +1038,8 @@ exports.verbose =
         updateGroups();
         return tag;
     }
-    
+
+	gbDefine('gb53_log', this);
+})();	// self-running
     
 

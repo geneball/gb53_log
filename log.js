@@ -5,16 +5,29 @@
 
 'use strict';
 
-(function gb53_MODULE(){
-	var $		= require('jquery-browserify', '$');
-	var moment 	= require('moment');
-	var sprintf	= require('sprintf');
-	var console = require('console');
-	//var expect 	= require('expect');		// for verify()
-	var Log 	= exports;  //require('gb53_log', 'Log'); // Log. e() w() d() i() v() V() W() WF() C() show()
-	//var Utils 	= require('gb53_utils', 'Utils'), PI = Utils.PI, DEG = Utils.DEG, asBool = Utils.asBool, asNum = Utils.asNum, asInt = Utils.asInt, selBool = Utils.selBool, selNum = Utils.selNum, selInt = Utils.selInt, angleWrap = Utils.angleWrap, clamp = Utils.clamp, pctClamp = Utils.pctClamp;
-	var Utils 	= require('gb53_utils', 'Utils', 'PI,DEG,asBool,asNum,asInt,selBool,selNum,selInt,angleWrap,clamp,pctClamp');
+(function gb53_Log(){
+
+	gbDefine('gb53_log', function setVar(nm, val){ 
+		  switch (nm){ case '$': $ = val; break;		case 'moment': moment = val; break;
+		  case 'sprintf': sprintf = val; break;  		case 'console': console = val; break;
+		  case 'Utils': Utils = val; break;	 			case 'PI': PI=val; break;  
+		  case 'DEG': DEG=val; break;					case 'asBool': asBool=val; break;  
+		  case 'asNum': asNum=val; break;  				case 'asInt': asInt=val; break;
+		  case 'selBool': selBool=val; break;  			case 'selNum': selNum=val; break;  
+		  case 'selInt': selInt=val; break;		  		case 'angleWrap': angleWrap=val; break;  
+		  case 'clamp': clamp=val; break;  				case 'pctClamp': pctClamp=val; break;
+		  case 'gb53_utils': break;
+		  default: alert('gb53_log setVar failed for '+nm); } } );
+	var $ 		= gbImport( { as: '$', from: 'jquery' } );			// import * as $ from 'jquery-browserify'; 
+    var moment	= gbImport( { as: 'moment', from: 'moment' } ); 	// import moment from 'moment';
+	var sprintf	= gbImport( { as: 'sprintf', from: 'sprintf' } );	// import sprintf from 'sprintf';
+	var console	= gbImport( { as: 'console', from: 'console' } );	// import expect from expect;  // for verify()
+	var Utils 	= gbImport( { nms: 'PI,DEG,asBool,asNum,asInt,selBool,selNum,selInt,angleWrap,clamp,pctClamp', from: 'gb53_utils' } );
 	// import { PI,DEG,asBool,asNum,asInt,selBool,selNum,selInt,angleWrap,clamp,pctClamp } from 'gb53_utils';
+	gbEndImports();
+	
+	var Log 	= exports;  
+//	var Log 	= gbImport( { as: 'Log', from: 'gb53_log' } ); 	// import * as Log from 'gb53_log';  // Log. e() w() d() i() v() V() W() WF() C() show()
 	
 	var Version = 'log.js 25-Sep-15';
 	/** get Version string
@@ -1038,8 +1051,6 @@ var ToggleView = exports.ToggleView = function ToggleView(){
         updateGroups();
         return tag;
     }
-
-	gbDefine('gb53_log', this);
 })();	// self-running
     
 

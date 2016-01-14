@@ -673,7 +673,8 @@ var ToggleView = exports.ToggleView = function ToggleView(){
     };
     // end_chart -------------------------------------------
 
-
+    function isBrowser(){ return true; }
+    
     var show = 
     /* return current value of log variable 
      * @param {string} tagnm - name of log variable defined with Log.V()

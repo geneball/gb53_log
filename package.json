@@ -2,17 +2,37 @@
   "name": "gb53_log",
   "version": "0.5.0",
   "description": "gb53.net logging module",
-  "main": "log.js",
+  "main": "index.html",
   "scripts": {
-	"browserify": "browserify log.js -o ../bundles/gb53_log.js -dv",
     "test": "qunit -c log.js -t tests.js"
+  },
+  "jspm": {
+    "dependencies": {
+      "jquery": "npm:jquery@^2.2.0",
+      "moment": "npm:moment@^2.11.2",
+      "qunit": "github:jquery/qunit@^1.21.0",
+      "sprintf": "npm:sprintf@^0.1.5"
+    },
+    "devDependencies": {
+      "babel": "npm:babel-core@^5.8.24",
+      "babel-runtime": "npm:babel-runtime@^5.8.24",
+      "core-js": "npm:core-js@^1.1.4"
+    }
   },
   "repository": {
     "type": "git",
     "url": "http://bitbucket.org/geneball/gb53_log"
   },
-  "require": [ "gb53_log", "jquery", "moment", "sprintf", "console" ],
-  "require-dev": [ "qunit-bdd" ],
+  "require": [
+    "gb53_log",
+    "jquery",
+    "moment",
+    "sprintf",
+    "console"
+  ],
+  "require-dev": [
+    "qunit-bdd"
+  ],
   "author": "Gene Ball",
   "license": "MIT"
 }

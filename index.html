@@ -1,25 +1,27 @@
+<!-- 
+	gb53.net  
+	universal module page
+	Gene Ball Feb2016
+-->
 <!DOCTYPE html>
 <html>
 <head>
-	<Title>GB53.net gb53_log</Title>
-	<link rel="icon" href="gb53.ico" type="image/x-icon" />
-	<link rel="stylesheet" type="text/css" href="gb53.css">
-	<script src="../bundles/gb53_log.js"></script>
+	<Title>GB53.net module</Title>
+	<link rel="icon" href="../img/gb53.ico" type="image/x-icon" />
+	<link rel="stylesheet" type="text/css" href="../css/gb53.css">
+    <script src="jspm_packages/system.js"></script>
+    <script src="config.js"></script>
+    <script>
+    System.import('./index.js');
+    </script>
 </head>
 <body>
 <div id='gb53_status'>
-	<div> <span id='gb53_msg'>msg</span></div>
+	<div> <span id='gb53_msg'>loading...</span></div>
 </div>
 
-<h1> <span id='gb53_log_name'></span> gb53_log </h1>
+<h1> <span id='gb53_header'> gb53 module: ^L to show log </span></h1>
 <div id='gb53_vals'> </div>
-
-<div id='gb53_edit'>
-	browserify log.js -o ../bundles/gb53_log.js -dv <br> 
-	jsdoc log.js -d ../jsdocs <br> 
-	qunit -c log.js -t tests.js <br> 
-	npm pack; cd ~; npm install www/gb53_log/*.tgz <br>
-<button> example btn </button>
 </div>
 <hr>
 

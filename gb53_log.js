@@ -9,8 +9,8 @@
 import $ from 'jquery';
 import moment from 'moment';
 import sprintf from 'sprintf';
-import * as Utils from '../utils/utils';
-import * as Log from './log';	// self-reference?
+import * as Utils from '../utils/gb53_utils';
+import * as Log from './gb53_log';	// self-reference?
 	
 	
 var sVersion = 'gb53_log.js 12-Feb-16';
@@ -946,7 +946,7 @@ export function warning() { warn.apply(null, arguments); }
  * @param {string} fmt - sprintf format string
  * @param {obj} ... - optional arguments matching fmt references
  */
-function info(fmt) {	// use info internally to avoid conflicts with local var i
+export function info(fmt) {	// use info internally to avoid conflicts with local var i
 	if (LogDisabled) return;
     wr('i', sprintf.apply(null, arguments));
 }

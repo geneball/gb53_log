@@ -9,8 +9,8 @@
 import $ from 'jquery';
 import moment from 'moment';
 import sprintf from 'sprintf';
-import * as Utils from '../utils/gb53_utils.js';
-import * as Log from './gb53_log.js';	// self-reference
+import * as Utils from 'gb53_utils';
+import * as Log from 'gb53_log';	// self-reference
 	
 	
 var sVersion = 'gb53_log.js 16-Apr-16';

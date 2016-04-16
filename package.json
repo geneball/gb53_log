@@ -21,7 +21,9 @@
       "jquery": "npm:jquery@^2.2.0",
       "moment": "npm:moment@^2.11.2",
       "qunit": "github:jquery/qunit@^1.21.0",
-      "sprintf": "npm:sprintf@^0.1.5"
+      "sprintf": "npm:sprintf@^0.1.5",
+      "gb53_log": "github:geneball/gb53_log@master",
+      "gb53_utils": "github:geneball/gb53_utils@master"
     },
     "devDependencies": {
       "babel-runtime": "npm:babel-runtime@^5.8.24",

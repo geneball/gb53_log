@@ -9,11 +9,12 @@
 import $ from 'jquery';
 import moment from 'moment';
 import sprintf from 'sprintf';
-import * as Utils from '../utils/gb53_utils';
-import * as Log from './gb53_log';	// self-reference?
+import * as Utils from '../utils/gb53_utils.js';
+import * as Log from './gb53_log.js';	// self-reference
 	
 	
-var sVersion = 'gb53_log.js 12-Feb-16';
+var sVersion = 'gb53_log.js 16-Apr-16';
+console.log('[ %s ...', sVersion);
 
 /** get Version string
  * @returns {string} version as 'filename.js date'
@@ -314,7 +315,7 @@ function watchHtml(tag){
 //        html += sprintf(' <button class="log_btn log_btn_w%s log_grp log_grp_w_wlab log_clr_W log_on" value="w%s">%s:</button>', tag.key,tag.key, tag.nm);
     html += sprintf(' <span id="logWVal%s"  class="log_grp log_grp_w_wval">%s</span>', tag.nm, tag.val );
     html += sprintf(' <span id="logWCnt%s"  class="log_grp log_grp_w_wcnt">%s</span>', tag.nm, tag.cnt);
-    var fmt = val('dtFmt');
+    var fmt = Log.val('dtFmt');
     html += sprintf(' <span id="logWLast%s" class="log_grp log_grp_w_wlast log_date" value="%s">%s</span></span>',
         tag.nm, tag.last.format('x'), tag.last.format(fmt));
     return html;
@@ -431,7 +432,7 @@ function logCmdKey(ev){
 function checkLogToggle(ev) {
     if (ev.ctrlKey && ev.shiftKey && ev.which==76)  // ctr-shf-L
     {
-        ToggleView();
+        Log.ToggleView();
         return false;   // event was handled
     }
     return true;
@@ -444,7 +445,7 @@ export function ToggleView(){  $('#logMarkup').toggle();  }
 function reformatDates() {
     $('.log_date').each(function () {
         var tmstamp = $(this).attr('value');
-        var fmt = val('dtFmt');
+        var fmt = Log.val('dtFmt');
         var dtstr = moment(tmstamp,'x').format(fmt);
         if (tmstamp!='')
             $(this).text(dtstr);
@@ -466,7 +467,7 @@ function onTic() {
             $('#logWVal'+tag.nm).text(tag.val);
             $('#logWCnt'+tag.nm).text(tag.cnt);
             $('#logWLast'+tag.nm).val(tag.last.format('x'));
-            $('#logWLast'+tag.nm).text(tag.last.format(val('dtFmt')));
+            $('#logWLast'+tag.nm).text(tag.last.format(Log.val('dtFmt')));
         }
     }
     for (var c in commands) {
@@ -727,13 +728,13 @@ export function isSet(tagnm) {
     return asBool(tagnm); 
 }
 function asBool(tagnm) {  // return val() as boolean
-    var v = val(tagnm);
+    var v = Log.val(tagnm);
     if (v == undefined) return false;
     var truevalues = '.true.t.1.yes.on.active.';
     v = '.' + v.toLowerCase() + '.';
     return truevalues.indexOf(v) >= 0;
 }
-function asNum(tagnm){ return parseFloat(val(tagnm)); }
+function asNum(tagnm){ return parseFloat( Log.val(tagnm)); }
 function toInt(float){ return Math.floor(float); }
 function asTag(tagnm) {
 	tagnm = tagnm.trim();
@@ -819,15 +820,15 @@ function typval(arg){
  * @param {array} args - 'slice'd copy of callers 'arguments', i.e. Array.prototype.slice.call(arguments)
  */
 export function Call(nmstr, args) {
-	var nms = nmstr.split(',');
-	var s = nms[0] + ": (";
+	var nms = nmstr.replace('(',',').split(',');
+	var s = nms[0].trim() + ": (";
 	for (var i=1; i<nms.length; i++){
-	    s += sprintf(" %s=%s,", nms[i], typval(args[i-1]));
+	    s += sprintf(" %s=%s,", nms[i].trim(), typval(args[i-1]));
 	}
 	for (var i=nms.length; i<=args.length; i++){
 	    s += sprintf(" %s,", typval(args[i-1]));
 	}
-	wr('d', s.substr(0,s.length-1)+' )');
+	wr('d', 'call: '+s.substr(0,s.length-1)+' )');
 }
 
 
@@ -976,7 +977,7 @@ export function v(fmt) { verbose.apply(null, arguments);; }
 
 function wr(lev, s) {
 //        if (!tags._L.enabled && lev!='W' && lev!='C' && lev!='V') return;
-    if (logCnt==null) init();
+    if (logCnt==null) Log.init();
     
     var levKey = (lev=='W' || lev=='C'? '__':'_')+lev;
     tags[levKey].cnt++;
@@ -992,8 +993,8 @@ function wr(lev, s) {
 //        if (!tags._L.enabled) return;
     logCnt++;
     if (!inBrowser) {
-        LogLines.push( { cnt: logCnt, level: lev, tagnm: tag.nm, time: val('dtFmt'), val: tag.val });
-        var m = sprintf('%03d %-s %s %s %s', logCnt, lev, tag.nm, tag.last.format(val('dtFmt')), tag.isVar? sprintf(' = %s(%s)',tag.val,tag.descr) : tag.val);
+        LogLines.push( { cnt: logCnt, level: lev, tagnm: tag.nm, time: Log.val('dtFmt'), val: tag.val });
+        var m = sprintf('%03d %-s %s %s %s', logCnt, lev, tag.nm, tag.last.format( Log.val('dtFmt')), tag.isVar? sprintf(' = %s(%s)',tag.val,tag.descr) : tag.val);
         if (tag.on) console.log(m + '\r');
         return tag;
     }
@@ -1002,7 +1003,7 @@ function wr(lev, s) {
     html += sprintf('<span class="log_grp log_grp_l_num log_clr_L">%03d</span> ', logCnt);
     html += sprintf('<span class="log_grp log_grp_l_lev">%-s</span> ', lev);
     html += sprintf('<span class="log_grp log_grp_l_tag">%s</span> ', tag.nm);
-    html += sprintf('<span class="log_grp log_grp_l_dt" value="%d">%s</span> ', tag.last.valueOf(), tag.last.format(val('dtFmt')));
+    html += sprintf('<span class="log_grp log_grp_l_dt" value="%d">%s</span> ', tag.last.valueOf(), tag.last.format(Log.val('dtFmt')));
     if (tag.isVar)
         html += sprintf('<span class="log_grp log_grp_l_val"> = %s </span><span class="log_grp_l_descr">(%s)</span> </div> ', tag.val, tag.descr);
     else
@@ -1011,5 +1012,7 @@ function wr(lev, s) {
     updateGroups();
     return tag;
 }
+console.log(' gb53_log.js ]');
+
     
 

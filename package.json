@@ -1,20 +1,20 @@
 {
-  "name": "gb53_log",
+  "registry": "jspm",
   "version": "0.5.0",
   "description": "gb53.net logging module",
-  "main": "../index.html?log",
+  "main": "gb53_log.js",
   "scripts": {
     "docs": "jsdoc -d ../jsdocs"
   },
   "repository": {
     "type": "git",
-    "url": "http://bitbucket.org/geneball/gb53_log"
+    "url": "https://github.com/geneball/gb53_log.git"
   },
   "author": "Gene Ball",
   "license": "MIT",
   "jspm": {
     "directories": {
-      "packages": "../jspm_packages"
+      "packages": "jspm_packages"
     },
     "dependencies": {
       "jquery": "npm:jquery@^2.2.0",
@@ -23,9 +23,29 @@
       "sprintf": "npm:sprintf@^0.1.5"
     },
     "devDependencies": {
-      "babel": "npm:babel-core@^5.8.24",
       "babel-runtime": "npm:babel-runtime@^5.8.24",
-      "core-js": "npm:core-js@^1.1.4"
+      "plugin-babel": "npm:systemjs-plugin-babel@^0.0.9"
+    },
+    "peerDependencies": {
+      "core-js": "npm:core-js@^1.1.4",
+      "fs": "github:jspm/nodelibs-fs@^0.2.0-alpha",
+      "path": "github:jspm/nodelibs-path@^0.2.0-alpha",
+      "process": "github:jspm/nodelibs-process@^0.2.0-alpha"
+    },
+    "overrides": {
+      "npm:babel-runtime@5.8.35": {
+        "main": false,
+        "dependencies": {},
+        "optionalDependencies": {
+          "core-js": "^1.2.0"
+        }
+      },
+      "npm:jquery@2.2.0": {
+        "format": "amd"
+      },
+      "npm:moment@2.11.2": {
+        "jspmNodeConversion": false
+      }
     }
   }
-}
+}
